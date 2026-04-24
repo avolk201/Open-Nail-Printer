@@ -4,7 +4,7 @@ cd "$(dirname "$0")/frontend"
 pio run &
 
 # Navigate to the backend directory
-cd "$(dirname "$0")/backend" || exit
+cd "$(dirname "$0")/../backend" || exit
 
 # Activate virtual environment if you have one (uncomment and modify if needed)
 # source ../venv/bin/activate
