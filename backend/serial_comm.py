@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from .protocol import Protocol
+from protocol import Protocol
 
 logger = logging.getLogger(__name__)
 
@@ -42,3 +42,9 @@ class SerialManager:
         if response == Protocol.LINE_ACK:
             return True
         return False
+
+    async def home(self):
+        logger.info("Sending HOME to ESP32")
+        await self.connection.write_async(Protocol.HOME)
+        # Assuming mock is ready
+        return True

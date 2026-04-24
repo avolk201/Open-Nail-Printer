@@ -12,8 +12,13 @@ const router = createRouter({
     },
     {
       path: '/upload',
-      name: 'upload',
+      name: 'remoteUpload',
       component: RemoteUploadView
+    },
+    {
+      path: '/gallery',
+      name: 'gallery',
+      component: () => import('../views/GalleryView.vue')
     }
   ]
 })
