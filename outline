@@ -1,0 +1,81 @@
+Software Architecture & Development Outline
+
+Project: Open-Source Nail Gel Printer
+Subsystem: Master Controller (RPi 3B+)
+Phase 1: OS & System Configuration
+
+Objective: Prepare the bare-metal environment for headless operation and hardware communication.
+
+    Flash OS: Install Raspberry Pi OS Lite (64-bit) via Raspberry Pi Imager.
+
+    Enable Interfaces: Use raspi-config to enable SSH, I2C, SPI, and the Camera interface.
+
+    Configure UART (Crucial): By default, the Pi uses its hardware serial pins (GPIO 14/15) for a Linux login console. You must disable the serial console but leave the serial port hardware enabled to free it up for communicating with your ESP32.
+
+    Install Kiosk Dependencies: Install chromium-browser, xserver-xorg, and matchbox-window-manager to allow a fullscreen browser to run without a desktop environment.
+
+Phase 2: The Backend Engine (Python & FastAPI)
+
+Objective: Build the core logic server that handles API requests, file uploads, and hardware commands.
+
+    Framework: FastAPI (with Uvicorn). It is modern, incredibly fast, natively asynchronous (which is great for waiting on serial data), and automatically generates API documentation.
+
+    Key Modules to Develop:
+
+        server.py: The main entry point, routing HTTP requests.
+
+        upload_handler.py: Saves incoming images from the Web UI to a temporary directory.
+
+        serial_comm.py: Uses the pyserial library to establish a 921,600 baud connection to the ESP32. Manages the TX/RX buffers and handshakes.
+
+Phase 3: The Computer Vision Pipeline (OpenCV)
+
+Objective: Process the uploaded image to fit the physical nail environment.
+
+    Framework: OpenCV for Python (cv2) and NumPy.
+
+    Pipeline Steps:
+
+        Capture: Trigger the internal Pi Camera (using libcamera or picamera2) and capture the illuminated finger.
+
+        Segmentation: Isolate the nail bed from the finger cradle using edge detection and color thresholding.
+
+        Warping: Apply the 1D Sine-wave pre-distortion to the uploaded user image to account for the nail's curvature.
+
+        Slicing & Halftoning: Convert the warped RGB image into the CMY color space. Apply a halftoning algorithm (like Floyd-Steinberg error diffusion) to convert continuous tones into pure binary dots (fire or don't fire).
+
+        Packetizing: Pack these binary dots into the raw byte arrays expected by your ESP32 firmware.
+
+Phase 4: The Unified Web Frontend
+
+Objective: Build the user interfaces for both the machine and the user's personal device.
+
+    Tech Stack: HTML/CSS/JS (Optionally a lightweight framework like Svelte or Vue to keep it snappy on the 3B+). Serve these static files directly from your FastAPI backend.
+
+    Touchscreen View (/):
+
+        Minimalist interface designed for a 5-inch or 7-inch DSI/HDMI touchscreen.
+
+        Large, finger-friendly buttons: "Ready", "Align", "Print", "Cancel".
+
+        A live video feed component showing the user their finger alignment in real-time.
+
+    Remote Web View (/upload):
+
+        A mobile-friendly page accessible from the user's phone via the local Wi-Fi network (e.g., http://nailprinter.local:8000).
+
+        Image upload button, cropping tool, and a preview of how the design will look on a generic nail shape.
+
+Phase 5: Integration & Handshake Protocol
+
+Objective: Make the Pi and the ESP32 talk flawlessly.
+
+    Define a strict serial protocol. For example:
+
+        START_PRINT: Pi wakes up the ESP32.
+
+        READY: ESP32 confirms motors are homed.
+
+        SEND_LINE <byte_array>: Pi sends one horizontal slice of the image.
+
+        LINE_ACK: ESP32 confirms the line was printed successfully and its buffer is ready for the next slice.
