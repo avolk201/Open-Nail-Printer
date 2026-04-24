@@ -52,8 +52,8 @@ if [ -d "$WAYFIRE_DIR" ]; then
     # Create the file if it doesn't exist
     touch "$WAYFIRE_CONFIG"
     # Append the autostart section if it isn't there, and add chromium
-    if ! grep -q "chromium-browser" "$WAYFIRE_CONFIG"; then
-        echo -e "\n[autostart]\nnailprinter_ui = chromium-browser --kiosk --start-maximized --disable-infobars http://127.0.0.1:8000" >> "$WAYFIRE_CONFIG"
+    if ! grep -q "chromium" "$WAYFIRE_CONFIG"; then
+        echo -e "\n[autostart]\nnailprinter_ui = chromium --kiosk --start-maximized --disable-infobars http://127.0.0.1:8000" >> "$WAYFIRE_CONFIG"
         echo "✅ Added to Wayfire autostart (Bookworm+)"
     fi
 fi
@@ -62,11 +62,11 @@ fi
 AUTOSTART_DIR="$HOME/.config/lxsession/LXDE-pi"
 AUTOSTART_FILE="$AUTOSTART_DIR/autostart"
 mkdir -p "$AUTOSTART_DIR"
-if ! grep -q "chromium-browser" "$AUTOSTART_FILE" 2>/dev/null; then
+if ! grep -q "chromium" "$AUTOSTART_FILE" 2>/dev/null; then
     echo "@xset s off" >> "$AUTOSTART_FILE"
     echo "@xset -dpms" >> "$AUTOSTART_FILE"
     echo "@xset s noblank" >> "$AUTOSTART_FILE"
-    echo "@chromium-browser --kiosk --start-maximized --disable-infobars http://127.0.0.1:8000" >> "$AUTOSTART_FILE"
+    echo "@chromium --kiosk --start-maximized --disable-infobars http://127.0.0.1:8000" >> "$AUTOSTART_FILE"
     echo "✅ Added to LXDE autostart (Bullseye and older)"
 fi
 
@@ -76,5 +76,5 @@ echo "The backend will now start silently in the background on every boot."
 echo "Once the desktop loads, Chromium will open full-screen and point to the frontend."
 echo ""
 echo "To test this right now without restarting, you can run: "
-echo "chromium-browser --kiosk http://127.0.0.1:8000"
+echo "chromium --kiosk http://127.0.0.1:8000"
 echo "Or just reboot your Raspberry Pi: sudo reboot"
