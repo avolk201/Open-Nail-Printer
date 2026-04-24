@@ -1,4 +1,7 @@
 #!/bin/bash
+cd "$(dirname "$0")/frontend"
+
+pio run &
 
 # Navigate to the backend directory
 cd "$(dirname "$0")/backend" || exit
