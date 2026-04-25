@@ -13,7 +13,7 @@ fi
 # Start the frontend server in the background
 echo "Starting Open Nail Printer frontend server..."
 cd "$PROJECT_ROOT/frontend" || exit
-npm run preview -- --host 0.0.0.0 --port 5173 &
+npm run dev -- --host 0.0.0.0 --port 5173 &
 
 # Navigate to the backend directory
 cd "$PROJECT_ROOT/backend" || exit

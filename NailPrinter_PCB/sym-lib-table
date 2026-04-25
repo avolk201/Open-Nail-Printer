@@ -1,0 +1,8 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "CD4504BM") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/CD4504BM/CD4504BM.kicad_sym") (options "") (descr ""))
+	(lib (name "DEVKIT_V1_ESP32-WROOM-32") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/DEVKIT_V1_ESP32-WROOM-32/DEVKIT_V1_ESP32-WROOM-32.kicad_sym") (options "") (descr ""))
+	(lib (name "TMC2209-LA-T") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/TMC2209-LA-T/TMC2209-LA-T.kicad_sym") (options "") (descr ""))
+	(lib (name "IRLML2502") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/IRLML2502/IRLML2502.kicad_sym") (options "") (descr ""))
+	(lib (name "FH12-24S-0.5SH_55_") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/FH12-24S-0.5SH_55_/FH12-24S-0.5SH_55_.kicad_sym") (options "") (descr ""))
+)

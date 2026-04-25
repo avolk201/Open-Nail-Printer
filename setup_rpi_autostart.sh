@@ -18,7 +18,7 @@ if ! command -v npm &> /dev/null; then
     exit 1
 fi
 npm install
-npm run build
+npm run dev
 
 echo "⚙️ Step 2: Creating a systemd service for the backend server..."
 SERVICE_FILE="/etc/systemd/system/nailprinter.service"
