@@ -42,7 +42,7 @@ Type=Application
 Name=Open Nail Printer
 Comment=Starts the Nail Printer API and UI
 # Use a login shell (-l) to ensure npm/node are in PATH, run the servers, wait, then launch Chromium
-Exec=bash -l -c "$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium-browser --kiosk --start-maximized --disable-infobars http://127.0.0.1:5173"
+Exec=bash -l -c "$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium --kiosk --start-maximized --disable-infobars http://127.0.0.1:5173"
 Terminal=false
 X-GNOME-Autostart-enabled=true
 EOF
@@ -66,5 +66,5 @@ echo "The application will now start automatically when the desktop loads."
 echo "It will wait a few seconds for the servers to spin up, then open Chromium."
 echo ""
 echo "To test this right now without restarting, you can run: "
-echo "bash -l -c \"$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium-browser --kiosk http://127.0.0.1:5173\""
+echo "bash -l -c \"$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium --kiosk http://127.0.0.1:5173\""
 echo "Or just reboot your Raspberry Pi: sudo reboot"

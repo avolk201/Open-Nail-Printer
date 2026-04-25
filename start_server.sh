@@ -3,6 +3,13 @@
 # Navigate to the project root directory first
 PROJECT_ROOT=$(cd "$(dirname "$0")" && pwd)
 
+# Attempt to load Node.js environment variables (NVM or standard profiles)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+source ~/.profile 2>/dev/null || true
+source ~/.bashrc 2>/dev/null || true
+
 # Activate virtual environment if it exists
 if [ -d "$PROJECT_ROOT/.venv" ]; then
     source "$PROJECT_ROOT/.venv/bin/activate"
