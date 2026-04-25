@@ -20,44 +20,35 @@ fi
 npm install
 npm run build
 
-echo "⚙️ Step 2: Creating a systemd service for the backend server..."
-SERVICE_FILE="/etc/systemd/system/nailprinter.service"
-sudo bash -c "cat > $SERVICE_FILE" << EOF
-[Unit]
-Description=Open Nail Printer API Server
-After=network.target
-
-[Service]
-Type=simple
-User=$USER
-WorkingDirectory=$PROJECT_ROOT
-ExecStart=$PROJECT_ROOT/start_server.sh
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
+echo "🧹 Cleaning up old autostart methods..."
+sudo systemctl stop nailprinter.service 2>/dev/null || true
+sudo systemctl disable nailprinter.service 2>/dev/null || true
+sudo rm -f /etc/systemd/system/nailprinter.service
 sudo systemctl daemon-reload
-sudo systemctl enable nailprinter.service
-sudo systemctl start nailprinter.service
 
-echo "🌐 Step 3: Configuring Chromium to open automatically on the desktop..."
+sed -i '/nailprinter_ui = chromium/d' "$HOME/.config/wayfire.ini" 2>/dev/null || true
+sed -i '/@chromium --kiosk/d' "$HOME/.config/lxsession/LXDE-pi/autostart" 2>/dev/null || true
 
-# Support for Raspberry Pi OS Bookworm (Wayland/Wayfire)
-WAYFIRE_DIR="$HOME/.config"
-WAYFIRE_CONFIG="$WAYFIRE_DIR/wayfire.ini"
-if [ -d "$WAYFIRE_DIR" ]; then
-    # Create the file if it doesn't exist
-    touch "$WAYFIRE_CONFIG"
-    # Append the autostart section if it isn't there, and add chromium
-    if ! grep -q "chromium" "$WAYFIRE_CONFIG"; then
-        echo -e "\n[autostart]\nnailprinter_ui = chromium --kiosk --start-maximized --disable-infobars http://127.0.0.1:5173" >> "$WAYFIRE_CONFIG"
-        echo "✅ Added to Wayfire autostart (Bookworm+)"
-    fi
-fi
+echo "⚙️ Step 2: Setting up XDG Autostart for the desktop environment..."
+# We use XDG Autostart because it waits for the graphical session to load, 
+# making it significantly more reliable for browsers and resolving PATH issues.
+AUTOSTART_DIR="$HOME/.config/autostart"
+mkdir -p "$AUTOSTART_DIR"
 
+DESKTOP_FILE="$AUTOSTART_DIR/nailprinter.desktop"
+cat > "$DESKTOP_FILE" << EOF
+[Desktop Entry]
+Type=Application
+Name=Open Nail Printer
+Comment=Starts the Nail Printer API and UI
+# Use a login shell (-l) to ensure npm/node are in PATH, run the servers, wait, then launch Chromium
+Exec=bash -l -c "$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium-browser --kiosk --start-maximized --disable-infobars http://127.0.0.1:5173"
+Terminal=false
+X-GNOME-Autostart-enabled=true
+EOF
+chmod +x "$DESKTOP_FILE"
+
+echo "🌐 Step 3: Configuring display sleep settings (Disabling screen blanking)..."
 # Support for Raspberry Pi OS Bullseye and older (X11/LXDE)
 AUTOSTART_DIR="$HOME/.config/lxsession/LXDE-pi"
 AUTOSTART_FILE="$AUTOSTART_DIR/autostart"
@@ -66,15 +57,14 @@ if ! grep -q "chromium" "$AUTOSTART_FILE" 2>/dev/null; then
     echo "@xset s off" >> "$AUTOSTART_FILE"
     echo "@xset -dpms" >> "$AUTOSTART_FILE"
     echo "@xset s noblank" >> "$AUTOSTART_FILE"
-    echo "@chromium --kiosk --start-maximized --disable-infobars http://127.0.0.1:5173" >> "$AUTOSTART_FILE"
     echo "✅ Added to LXDE autostart (Bullseye and older)"
 fi
 
 echo ""
 echo "🎉 Setup complete!"
-echo "The backend will now start silently in the background on every boot."
-echo "Once the desktop loads, Chromium will open full-screen and point to the frontend."
+echo "The application will now start automatically when the desktop loads."
+echo "It will wait a few seconds for the servers to spin up, then open Chromium."
 echo ""
 echo "To test this right now without restarting, you can run: "
-echo "chromium --kiosk http://127.0.0.1:5173"
+echo "bash -l -c \"$PROJECT_ROOT/stop_server.sh; $PROJECT_ROOT/start_server.sh & sleep 8 && chromium-browser --kiosk http://127.0.0.1:5173\""
 echo "Or just reboot your Raspberry Pi: sudo reboot"
