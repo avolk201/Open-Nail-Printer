@@ -41,10 +41,12 @@ Standard UV nail gel is hydrophobic, meaning water-based inkjet droplets will be
 ## Repository Structure
 
 * `/cad`: Onshape mechanical assemblies, STL files, and 3D printable carriage mounts.
-* `/firmware/esp32`: C source code and CMake build files for the ESP-IDF environment.
-* `/hardware/kicad`: PCB schematics, footprints, and Gerber files for the Mainboard and Smart Carriage.
-* `/software/backend`: Python FastAPI server, serial communication protocols, and OpenCV halftoning pipelines.
-* `/software/frontend`: Web-based touchscreen user interface.
+* `/Nail-printer-embedded`: C source code and CMake build files for the ESP-IDF environment.
+* `/NailPrinter_PCB`: PCB schematics, footprints, and Gerber files for the Mainboard and Smart Carriage.
+* `/backend`: Python FastAPI server, serial communication protocols, and OpenCV halftoning pipelines.
+* `/frontend`: Web-based touchscreen user interface built with Vite and React/Vue.
+* `start_server.sh` / `stop_server.sh`: Utility scripts to spin up and terminate the backend and frontend processes.
+* `setup_rpi_autostart.sh`: Configures XDG Autostart to automatically boot into the kiosk interface on Raspberry Pi OS.
 
 ## Assembly & Installation
 
