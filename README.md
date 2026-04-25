@@ -67,5 +67,8 @@ Standard UV nail gel is hydrophobic, meaning water-based inkjet droplets will be
 3. Assemble the Cartesian gantry using NEMA 14 stepper motors, optical limit switches, and a 150 LPI optical encoder strip.
 4. Perform the Hand-Eye Calibration routine detailed in the documentation to map camera pixel coordinates to physical stepper steps.
 
+## Acknowledgments
+Special thanks to the [printercart_simple](https://github.com/Spritetm/printercart_simple/) project by Spritetm, whose foundational work was instrumental in understanding and reverse-engineering the HP print cartridge protocols used in this project.
+
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details. Note that any proprietary modifications to the HP 63 cartridge footprint or reverse-engineered hardware protocols are implemented here for educational and research purposes only.
