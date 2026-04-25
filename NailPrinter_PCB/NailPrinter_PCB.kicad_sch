@@ -2,9 +2,101 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid 876b3e30-d187-46f3-87a9-b93d7260baa1)
+	(uuid "876b3e30-d187-46f3-87a9-b93d7260baa1")
 	(paper "A4")
 	(lib_symbols)
+	(sheet
+		(at 62.23 102.87)
+		(size 92.71 38.1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "54a8f4df-af3f-470d-995c-0b56f37ce6e3")
+		(property "Sheetname" "Smart_Carriage"
+			(at 62.23 102.1584 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Smart_Carriage.kicad_sch"
+			(at 62.23 141.5546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "NailPrinter_PCB"
+				(path "/876b3e30-d187-46f3-87a9-b93d7260baa1"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 52.07 30.48)
+		(size 105.41 48.26)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "b719a0a0-2ef4-4e85-b55b-2e2d16b6ee89")
+		(property "Sheetname" "Stationary_Mainboard"
+			(at 52.07 29.7684 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Stationary_Mainboard.kicad_sch"
+			(at 52.07 79.3246 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "NailPrinter_PCB"
+				(path "/876b3e30-d187-46f3-87a9-b93d7260baa1"
+					(page "2")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
