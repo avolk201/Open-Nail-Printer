@@ -11,4 +11,5 @@
 	(lib (name "08055C121KAT2A") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/08055C121KAT2A/08055C121KAT2A.kicad_sym") (options "") (descr ""))
 	(lib (name "AO3401") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/AO3401/AO3401.kicad_sym") (options "") (descr ""))
 	(lib (name "AO3400") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/AO3400/AO3400.kicad_sym") (options "") (descr ""))
+	(lib (name "TMC2208_SILENTSTEPSTICK") (type "KiCad") (uri "/Users/alanavolkov/Documents/KiCad/custom_libs/TMC2208_SILENTSTEPSTICK/TMC2208_SILENTSTEPSTICK.kicad_sym") (options "") (descr ""))
 )
