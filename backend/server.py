@@ -75,7 +75,7 @@ class CameraManager:
         with self.lock:
             if self.cap is None or not self.cap.isOpened():
                 # Index 1 is usually the external/Continuity camera on Mac
-                self.cap = cv2.VideoCapture(1)
+                self.cap = cv2.VideoCapture(2)
                 time.sleep(0.5) # warmup
             success, frame = self.cap.read()
             if not success:

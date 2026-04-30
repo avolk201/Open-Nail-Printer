@@ -4,3 +4,4 @@ class Protocol:
     SEND_LINE = b'\x03'
     LINE_ACK = b'\x04'
     HOME = b'\x05'
+    LINE_NACK = b'\x06'

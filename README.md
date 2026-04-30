@@ -13,7 +13,7 @@ The project is divided into three distinct operational domains:
 * **Environment:** Python 3, FastAPI, OpenCV.
 * **Function:** Operates in a headless kiosk mode serving a React/Vue frontend to a local touchscreen UI. 
 * **Vision Pipeline:** Captures the finger via a fixed-focus, low-distortion downward-facing camera. Allows the user to define a bounding box, warps the selected 2D image using a 1D sine-wave pre-distortion algorithm to map to the nail's curvature, and converts the RGB image into a binary CMYK halftone matrix via Floyd-Steinberg error diffusion.
-* **Communication:** Slices the halftone matrix into 32-byte chunks and transmits them via UART over USB to the ESP32 at 921,600 baud.
+* **Communication:** Slices the halftone matrix into 42-byte chunks and transmits them via UART over USB to the ESP32 at 921,600 baud.
 
 ### 2. Real-Time Hardware Control (ESP32)
 * **Environment:** ESP-IDF (C), FreeRTOS.
@@ -31,46 +31,74 @@ A critical feature of this design is the hardware "guillotine" failsafe located 
 
 Thermal inkjet resistors will permanently burn out if held high for more than a few microseconds. To protect against software lockups, the 16V firing lines are routed through an AC-coupled gate drive (capacitive differentiator). An RC time-constant enforces a strict physical timeout of approximately 10-15µs. If the ESP32 freezes while a firing pin is pulled high, the capacitor will charge and autonomously sever the 16V supply to the cartridge, preventing thermal runaway.
 
-## The Chemical Print Workflow
-Standard UV nail gel is hydrophobic, meaning water-based inkjet droplets will bead and smear upon contact. The system requires a strict chemical preparation process:
-1. **Base Coat:** Apply standard UV gel base coat to protect the natural nail. Cure completely.
-2. **Inkjet Receptive Coating (IRC):** Apply a specialized Print Gel (or Matte UV Top Coat) to create a hydrophilic, micro-porous surface. Cure completely.
-3. **Print Phase:** The machine jets water-based ink onto the IRC. The pores instantly absorb the carrier fluid, fixing the pigment in place and preventing dot gain. Allow 60 seconds for evaporation.
-4. **Encapsulation:** Seal the dry ink with a standard clear UV gel top coat. Cure completely.
-
 ## Repository Structure
 
-* `/cad`: Onshape mechanical assemblies, STL files, and 3D printable carriage mounts.
-* `/Nail-printer-embedded`: C source code and CMake build files for the ESP-IDF environment.
-* `/NailPrinter_PCB`: PCB schematics, footprints, and Gerber files for the Mainboard and Smart Carriage.
-* `/backend`: Python FastAPI server, serial communication protocols, and OpenCV halftoning pipelines.
-* `/frontend`: Web-based touchscreen user interface built with Vite and React/Vue.
-* `start_server.sh` / `stop_server.sh`: Utility scripts to spin up and terminate the backend and frontend processes.
-* `setup_rpi_autostart.sh`: Configures XDG Autostart to automatically boot into the kiosk interface on Raspberry Pi OS.
+* `/cad`: (In Progress) Onshape mechanical assemblies, STL files, and 3D printable carriage mounts.
+* `/Nail-printer-embedded`: ESP-IDF C source code and FreeRTOS task configurations.
+* `/NailPrinter_PCB`: KiCad 8.0 project files, library symbols, and footprints.
+## Project Status
 
-## Assembly & Installation
+### Completed Features
+* **Backend (Raspberry Pi)**
+    * FastAPI server architecture with REST endpoints for system control and design management.
+    * Computer Vision pipeline: Floyd-Steinberg halftoning (RGB to CMYK), 1D sine-wave nail warping, and manual affine transformations.
+    * High-speed UART serial protocol (921,600 baud) for ESP32 communication.
+    * MJPEG camera streaming for real-time nail alignment.
+* **Frontend (Touchscreen UI)**
+    * Vue 3/Vite application optimized for 7" Raspberry Pi touchscreen.
+    * Interactive alignment interface with manual bounding box selection.
+    * Real-time design adjustment (scale, rotation, pan) via overlay.
+    * Design gallery and "Set" printing workflow for sequential multi-finger printing.
+* **Firmware (ESP32)**
+    * Dual-core task distribution: UART ingestion on Core 0, motion/sync on Core 1.
+    * I2S Parallel DMA driver for microsecond-accurate HP 63 cartridge firing.
+    * TMC2209 stepper driver integration via UART and MCPWM pulse generation.
+    * Hardware pulse counting (PCNT) infrastructure for linear optical encoder feedback.
+* **Hardware (KiCad)**
+    * Two-board architecture: Stationary Mainboard and Smart Carriage.
+    * Power distribution for 24V, 16V (firing), 9V (logic), and 5V (MCU) rails.
+    * Hardware guillotine failsafe using capacitive AC-coupling.
+
+### Pending / TODO
+* **Firmware**
+    * Implement hardware-level trigger linking PCNT encoder thresholds to I2S DMA output for closed-loop positional accuracy.
+    * Complete homing sequence logic within limit switch ISR handlers.
+    * Implement S-curve acceleration ramps for smoother gantry motion.
+* **Backend**
+    * Replace OpenCV camera capture with native `libcamera` or `picamera2` for Raspberry Pi hardware.
+    * Implement automated nail segmentation to replace manual bounding box alignment.
+* **Hardware**
+    * Verify and resolve 9V/3.3V domain crossing alerts in schematic.
+    * Add fiducial markers for automated pick-and-place assembly.
+    * Populate manufacturer part numbers (MPNs) across the Bill of Materials.
+* **Mechanics**
+    * Finalize and release Onshape CAD assemblies and 3D printable STL files for the gantry and carriage.
+
+## Development Milestones
+
+1.  **Software**: Implementation of the FastAPI server, Vue UI, and CMYK halftoning pipeline. [DONE]
+2.  **Hardware Design**: Design and layout of the Mainboard and Smart Carriage PCBs. [DONE]
+3.  **Hardware Validation**: Manufacture PCBs and confirm functional operation. [TODO]
+4.  **Firmware Core**: High-speed communication and raw I2S printhead driving. [DONE]
+5.  **Motion Control Integration**: Synchronization of gantry movement with firmware step generation. [IN PROGRESS]
+6.  **Closed-Loop Accuracy**: Linking linear optical encoder pulses to hardware-triggered ink deposition. [TODO]
+7.  **Kiosk Mode Integration**: Final Raspberry Pi OS configuration for standalone touchscreen operation. [TODO]
+8.  **System Validation**: Full 5-finger print test using water-based cosmetic ink. [TODO]
+
 
 ### Prerequisites
 * Raspberry Pi OS Lite (64-bit)
 * Espressif ESP-IDF v5.x
-* KiCad 7.0+
+* KiCad 8.0+
 * 24V 3A DC Power Supply
 * Modified HP 63 Tri-Color Cartridge (Flushed and refilled with water-based cosmetic/edible ink).
 
 ### Software Setup
 1. Clone the repository to the Raspberry Pi.
-2. Navigate to `/software/backend` and install dependencies via `pip install -r requirements.txt`.
-3. Configure the Pi to launch the FastAPI server on boot via systemd.
-4. Flash the ESP32 firmware using the ESP-IDF toolchain: `idf.py build flash monitor`.
+2. Navigate to `backend/` and install dependencies: `pip install -r requirements.txt`.
+3. Configure the Pi to launch the FastAPI server on boot.
+4. Flash the ESP32 firmware: `idf.py build flash monitor`.
 
-### Hardware Assembly
-1. Fabricate the PCBs using the provided Gerber files. 
-2. Populate the boards, ensuring the LCSC part numbers match the Bill of Materials for automated surface-mount assembly.
-3. Assemble the Cartesian gantry using NEMA 14 stepper motors, optical limit switches, and a 150 LPI optical encoder strip.
-4. Perform the Hand-Eye Calibration routine detailed in the documentation to map camera pixel coordinates to physical stepper steps.
-
-## Acknowledgments
-Special thanks to the [printercart_simple](https://github.com/Spritetm/printercart_simple/) project by Spritetm, whose foundational work was instrumental in understanding and reverse-engineering the HP print cartridge protocols used in this project.
 
 ## License
-This project is licensed under the MIT License. See the `LICENSE` file for details. Note that any proprietary modifications to the HP 63 cartridge footprint or reverse-engineered hardware protocols are implemented here for educational and research purposes only.
+This project is licensed under the MIT License. See the `LICENSE` file for details. Note that any proprietary modifications to the HP 63 cartridge footprint are for educational and research purposes only.
